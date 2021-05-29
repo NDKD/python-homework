@@ -1,0 +1,89 @@
+import csv
+from pathlib import Path
+csvpath = "budget_data.csv"
+
+csvreader = 0
+csv_header = 0
+
+# Open the csv file as an object
+with open(csvpath, "r") as csvfile:
+     # Pass in the csv file to the csv.reader() function
+    # (with ',' as the delmiter/separator) and return the csvreader object
+    csvreader = csv.reader(csvfile, delimiter=",")
+    
+    # Read the header row first (skip this step if there is no header)
+    
+    try:
+        csvheader = next(csvreader)
+    except StopIteration:
+        pass
+    
+    
+    
+    
+    
+    #csv_header = next(csvreader)
+    
+    
+    # Print the header
+    print(csv_header)
+    
+    
+    #Initialize variables
+    total_profit_loss = 0
+    count_months = 0
+    
+    max_profits = -9999999999
+    min_profits = 9999999999
+    max_profits_row = ""
+    min_profits_row = ""
+    total_change = []
+    previous_profit = 0
+    
+
+    for row in csvreader:
+        
+        count_months += 1
+        
+        total_profit_loss += int(row[1])
+        
+        if count_months > 1:
+            change =  int(row[1]) - previous_profit
+            total_change.append(change)
+            if change > max_profits:
+                max_profits = change
+                max_profits_row = row[0]
+            if change < min_profits:
+                min_profits = change
+                min_profits_row = row[0]
+                
+                
+            
+#             total_change += change
+            
+            
+        previous_profit = int(row[1])
+        
+print(f'''
+Financial Analysis
+----------------------------
+Total Months: {count_months}
+Total: ${total_profit_loss}
+Average  Change: ${sum(total_change)/len(total_change):.2f}
+Greatest Increase in Profits: {max_profits_row} (${max_profits})
+Greatest Decrease in Profits: {min_profits_row} (${min_profits})
+''')
+
+
+output_path = Path('budget_data.txt')
+
+# Open the output path as a file object
+file = open(output_path, 'w')
+file.write(f"Total Months: {count_months}")
+file.write(f"Total: ${total_profit_loss}")
+file.write(f"Average  Change: ${sum(total_change)/len(total_change):.2f}")
+file.write(f"Greatest Increase in Profits: {max_profits_row} (${max_profits}")
+file.write(f"Greatest Decrease in Profits: {min_profits_row} (${min_profits}")
+
+file.close()
+    # Set the file object as a txtwriter object
